@@ -40,7 +40,7 @@ max_generations = 5000000
 # Load data and calculate years
 num_points = 10000
 x_days = np.arange(num_points) * 10
-y_data = np.loadtxt('edges2.txt')
+y_data = np.loadtxt('continuous.txt')
 x_years = x_days / 365
 
 # Plot first set of data
@@ -49,7 +49,7 @@ ax1.plot(x_days, np.exp(-(0.0010125 * 10000 * (1 - np.exp(-0.35 * 0.0001 * x_day
 ax1.plot(x_days, y_data, linewidth=3, label='continuous selection', linestyle='--', color='tab:gray')
 
 # Plot second set of data
-ydata2 = np.loadtxt('edges.txt')
+ydata2 = np.loadtxt('periodic.txt')
 ax1.plot(x_days, ydata2, linewidth=3, linestyle=':', label='periodic selection', color='tab:brown')
 
 # Setting plot attributes
