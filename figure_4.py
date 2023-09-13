@@ -78,7 +78,6 @@ dN_dS_sim_obs=numpy.zeros(numpoints)
 Ns_sim_obs=numpy.loadtxt("nonneutralmutations.txt")
 dN_dS_sim_act=numpy.zeros(numpoints)
 Ns_hitch=numpy.loadtxt("nonneutralhitch.txt")
-dN_dS_1_quad=numpy.zeros(numpoints)
 sim_fitness=numpy.ones(numpoints)
 
 for n in range(0,numpoints):
