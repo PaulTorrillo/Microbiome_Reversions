@@ -3,4 +3,4 @@ Code and data repository for the manuscript "Reversions mask the contribution of
 
 Currently under construction
 
-Please inquire torrillo@mit.edu for any questions or assistance
+Please inquire at torrillo@mit.edu for any questions or assistance
