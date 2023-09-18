@@ -240,7 +240,6 @@ if __name__ == '__main__':
           #  maxfz.append(numpy.mean(maxf,axis=0))
             maxesfz.append(numpy.mean(maxesf,axis=0))
             mutationsz.append(numpy.mean(mutations,axis=0))
-        #print(numpy.mean(listopain[1:]))
         #matplotlib.pyplot.plot(mutationsz[0])
         #matplotlib.pyplot.xlabel('Metapopulation Turnovers')
         #matplotlib.pyplot.ylabel('Average Mutational Load')
