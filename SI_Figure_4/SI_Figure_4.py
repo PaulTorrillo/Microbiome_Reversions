@@ -92,7 +92,7 @@ dN_dS_theory=numpy.zeros(numpoints)
 theory_fitness=numpy.zeros(numpoints)
 
 
-Ns_sim= numpy.loadtxt("ultramutation2.txt")
+Ns_sim= numpy.loadtxt("higher_mutation.txt")
 dN_dS_sim=numpy.zeros(numpoints)
 sim_fitness=numpy.ones(numpoints)
 
