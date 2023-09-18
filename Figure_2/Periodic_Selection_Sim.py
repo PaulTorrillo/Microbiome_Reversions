@@ -313,4 +313,5 @@ if __name__ == '__main__':
     plt.tick_params(length=10, width=1, which='minor', direction='inout')
     plt.xticks(size=20)
     plt.yticks(size=20)
+    numpy.savetxt("periodic.txt",y_data)
     matplotlib.pyplot.show()
