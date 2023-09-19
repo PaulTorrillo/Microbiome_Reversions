@@ -54,7 +54,7 @@ neutral_N_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_nonsyno
 nonneutral_N_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_nonsynonymous*(1-fraction_N_neutral)
 S_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_synonymous
 normalization_constant=fraction_synonymous/fraction_nonsynonymous
-numpoints=2000000
+numpoints=20000
 max_generations=2000000
 def calculate_log_result(x, a, b):
     t = x / (2 * S_rate_per_codon)
