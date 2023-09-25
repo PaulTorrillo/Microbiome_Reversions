@@ -209,7 +209,7 @@ if __name__ == '__main__':
                     maxesf[u].append(currentmaxfpop)
                     mutations[u][k]=mutations[u][k]/populationsize
                     print(mutations[u][k])
-                    if transmissionbottleneck:
+                    if transmissionbottleneck: #Note this is unusued in this simulation
                         survivors=numpy.random.multinomial(transmission_surv,numpy.divide(spec_size_list,populationsize))
                         recreate=[]
                         newcurrentclasses={}
