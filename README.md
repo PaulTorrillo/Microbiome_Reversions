@@ -5,4 +5,6 @@ Currently under construction
 
 In each figure file, one should find the script that plots it, and if relevant, the script that runs the simulation for the plot. There should also be pre generated simulations outputs to reproduce the runs from the manuscript.
 
+There is also a simulation folder that contains a more commented version of the main simulations used in the paper. The original simulations should be in the respective figure files. These may be helpful for those interested in simulating large population sizes. The main idea of what was done is also layed out in the paper's methods section.
+
 Please inquire at torrillo@mit.edu for any questions or assistance
