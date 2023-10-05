@@ -247,7 +247,7 @@ if __name__ == '__main__':
                         availablebens=0
                         transmissionbottleneck = True
                     currentpopsize=populationsize
-            #Scaing off averages for the simulation
+            #Saving off averages for the simulation
             reversionsz.append(numpy.mean(reversions,axis=0))
             maxesz.append(numpy.mean(maxes,axis=0))
             avgfz.append(numpy.mean(avgf,axis=0))
