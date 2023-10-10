@@ -1,7 +1,7 @@
 # Microbiome_Reversions
 Code and data repository for the manuscript "Reversions mask the contribution of adaptive evolution in microbiomes" by Paul Torrillo and Tami Lieberman.
 
-Currently under construction
+The current repository should contain all code and data used in the manuscript. Code repository may still be updated to improve readability.
 
 In each figure file, one should find the script that plots it, and if relevant, the script that runs the simulation for the plot. There should also be pre generated simulations outputs to reproduce the runs from the manuscript.
 
