@@ -233,7 +233,7 @@ if __name__ == '__main__':
     save2 = []
     save3=[]
     for i in range(len(mutationsz)):
-        if i % 100 == 0:
+        if i % 1 == 0: #we can save off less numbers than every generation if we desire
             save1.append(mutationsz[i])
             save2.append(reversionsz[i])
             save3.append(hitchz[i])
