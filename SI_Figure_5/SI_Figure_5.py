@@ -92,13 +92,11 @@ dN_dS_theory=numpy.zeros(numpoints)
 theory_fitness=numpy.zeros(numpoints)
 
 
-Ns_sim= numpy.add(numpy.loadtxt("neutralmutations3.txt"), numpy.loadtxt("neutralmutations2.txt")) / 2
-numpy.savetxt("neutralmutations.txt", Ns_sim)
+Ns_sim=numpy.loadtxt("neutralmutations.txt")
 dN_dS_sim=numpy.zeros(numpoints)
 sim_fitness=numpy.ones(numpoints)
 
-Ns_exclude_adap= numpy.add(numpy.loadtxt("neutralhitch3.txt"), numpy.loadtxt("neutralhitch2.txt")) / 2
-numpy.savetxt("neutralhitchhikers.txt", Ns_exclude_adap)
+Ns_exclude_adap=numpy.loadtxt("neutralhitchhikers.txt")
 dN_dS_exclude_adap=numpy.zeros(numpoints)
 exclude_adap_fitness=numpy.ones(numpoints)
 
