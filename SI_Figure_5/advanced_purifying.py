@@ -116,7 +116,7 @@ if __name__ == '__main__':
     maxfz = []
     maxesfz = []
     mutationsz = []
-    for zed in range(10):
+    for zed in range(1):
         reversions = [None]*numberofruns
         hitch = [None] * numberofruns
         maxes=[None]*numberofruns
