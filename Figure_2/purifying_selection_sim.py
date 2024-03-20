@@ -240,7 +240,7 @@ if __name__ == '__main__':
             maxesfz.append(numpy.mean(maxesf,axis=0))
             mutationsz.append(numpy.mean(mutations,axis=0))
         save=[]
-        #This correctly averages simulations if there are multiple. Without it only first simulation is saved.
+        #This correctly averages simulations if there are multiple. Without it only first simulation is saved. Doesn't matter when only one simulation is run.
         mutationsz = numpy.mean(mutationsz, axis=0)
         reversionsz = numpy.mean(reversionsz, axis=0)
         hitchz = numpy.mean(hitchz, axis=0)
