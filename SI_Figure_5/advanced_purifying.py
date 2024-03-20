@@ -232,6 +232,9 @@ if __name__ == '__main__':
     save1 = []
     save2 = []
     save3=[]
+    mutationsz = numpy.mean(mutationsz, axis=0)
+    reversionsz = numpy.mean(reversionsz, axis=0)
+    hitchz = numpy.mean(hitchz, axis=0)
     for i in range(len(mutationsz)):
         if i % 1 == 0: #we can save off less numbers than every generation if we desire
             save1.append(mutationsz[i])
