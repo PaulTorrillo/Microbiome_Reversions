@@ -259,7 +259,9 @@ if __name__ == '__main__':
         #matplotlib.pyplot.ylabel('Average Mutational Load')
         #matplotlib.pyplot.show()
         save=[]
-        mutationsz=mutationsz[0]
+        mutationsz = numpy.mean(mutationsz, axis=0)
+        reversionsz = numpy.mean(reversionsz, axis=0)
+        hitchz = numpy.mean(hitchz, axis=0)
         for i in range(len(mutationsz)):
             if i%100==0:
                 save.append(mutationsz[i])
