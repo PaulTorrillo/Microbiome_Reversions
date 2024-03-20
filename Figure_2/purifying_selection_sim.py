@@ -237,14 +237,10 @@ if __name__ == '__main__':
             reversionsz.append(numpy.mean(reversions,axis=0))
             maxesz.append(numpy.mean(maxes,axis=0))
             avgfz.append(numpy.mean(avgf,axis=0))
-          #  maxfz.append(numpy.mean(maxf,axis=0))
             maxesfz.append(numpy.mean(maxesf,axis=0))
             mutationsz.append(numpy.mean(mutations,axis=0))
-        #matplotlib.pyplot.plot(mutationsz[0])
-        #matplotlib.pyplot.xlabel('Metapopulation Turnovers')
-        #matplotlib.pyplot.ylabel('Average Mutational Load')
-        #matplotlib.pyplot.show()
         save=[]
+        #This correctly averages simulations if there are multiple. Without it only first simulation is saved.
         mutationsz = numpy.mean(mutationsz, axis=0)
         reversionsz = numpy.mean(reversionsz, axis=0)
         hitchz = numpy.mean(hitchz, axis=0)
