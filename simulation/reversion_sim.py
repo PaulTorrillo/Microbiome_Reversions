@@ -260,6 +260,10 @@ if __name__ == '__main__':
     matplotlib.pyplot.ylabel('Average Mutational Load')
     matplotlib.pyplot.xlim([1000,1000000])
     matplotlib.pyplot.xscale('log')
+    #This is needed to correctly average the mutations, without it the first simulation is just returned.
+    mutationsz = numpy.mean(mutationsz, axis=0)
+    reversionsz = numpy.mean(reversionsz, axis=0)
+    hitchz = numpy.mean(hitchz, axis=0)
     save1 = []
     save2 = []
     save3=[]
