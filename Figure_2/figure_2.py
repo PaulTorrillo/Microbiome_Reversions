@@ -37,6 +37,23 @@ normalization_constant = fraction_synonymous / fraction_nonsynonymous
 numpoints = 50000
 max_generations = 5000000
 
+#For top axis conversion
+def to_year(x):
+    years = x / (365)
+    return years
+
+def to_gen(x):
+    gen=x*(365)
+    return gen
+
+def to_year_2(x):
+    years = x / (2 * S_rate_per_codon * 365)
+    return years
+
+def to_dS(x):
+    dS=x*(2 * S_rate_per_codon * 365)
+    return dS
+
 # Load data and calculate years
 num_points = 10000
 x_days = np.arange(num_points) * 10
@@ -60,17 +77,11 @@ ax1.set_ylabel('frequency of wild type (mutation free) class', size=14, rotation
 ax1.tick_params(length=12, width=1, which='major', direction='inout')
 ax1.tick_params(length=8, width=1, which='minor', direction='inout')
 
-# Adding secondary x-axis
-ax12 = ax1.twiny()
-ax12.set_xlim(ax1.get_xlim())
-ax12.set_xlabel('years', size=14, labelpad=10)
-
-# Formatting x-axis labels
-def years_formatter1(x, pos):
-    return f'{int(x / 365)}'
-ax12.xaxis.set_major_formatter(FuncFormatter(years_formatter1))
-ax12.tick_params(length=12, width=1, which='major', direction='inout')
-ax12.tick_params(length=8, width=1, which='minor', direction='inout')
+# Configure the secondary x axis of the main chart
+ax12 = ax1.secondary_xaxis('top', functions=(to_year,to_gen))
+ax12.set_xlabel('MRCA (years)', size=12)
+ax12.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax12.tick_params(length=6, width=1, which='minor', direction='inout')
 
 def small_round(number):
     """Rounds a number up until it reaches a minimum of 100."""
@@ -118,9 +129,9 @@ for n in range(numpoints):
         fitness_data[i][n] = (1 - s) ** mutation_data[i][n]
 
 # Plotting dN/dS ratios for different mutation rates
-mutation_labels = ['N$_{e}$ 1 million', 'N$_{e}$ 1 billion', 'N$_{e}$ 1 trillion', 'N$_{e}$ 1 quadrillion']
+mutation_labels = ['N$_{e}$=10$^{6}$', 'N$_{e}$=10$^{9}$', 'N$_{e}$=10$^{12}$', 'N$_{e}$=10$^{15}$']
 mutations_data = [dN_dS_data[0], dN_dS_data[1], dN_dS_data[2], dN_dS_data[3]]
-ax3.plot(S_rate_per_codon*2*T_generations, dN_dS_theory, linewidth=3, label='theory',color='k')
+ax3.plot(S_rate_per_codon*2*T_generations, dN_dS_theory, linewidth=3, label='infinite N$_{e}$',color='k')
 for label, data in zip(mutation_labels, mutations_data):
     ax3.plot(S_rate_per_codon*2*T_generations, data, linewidth=3, label=label)
 
@@ -145,7 +156,7 @@ ax3.set_ylim([0.05,5])
 ax3.legend(fontsize='10', ncol=2, frameon=False)
 
 # Path to the folder containing flat files
-folder_path = "dnds_flat_files"
+folder_path = "../dnds_flat_files"
 
 # Generate a sorted list of unique genera from the file names
 genus_list = sorted({filename.split("_")[0] + '_' + filename.split("_")[1] for filename in os.listdir(folder_path) if filename != '.DS_Store'})
@@ -153,7 +164,7 @@ genus_list = sorted({filename.split("_")[0] + '_' + filename.split("_")[1] for f
 # Iterate through the genera list
 for genus in genus_list:
     # Load data for each genus into a list
-    genus_data = [np.loadtxt(f'dnds_flat_files/{file}', skiprows=1, delimiter=',', usecols=(0, 1))
+    genus_data = [np.loadtxt(f'../dnds_flat_files/{file}', skiprows=1, delimiter=',', usecols=(0, 1))
                   for file in os.listdir(folder_path) if file.startswith(genus)]
 
     # Concatenate all the data for the current genus
@@ -166,17 +177,15 @@ for genus in genus_list:
         ax3.scatter(np.exp(x), np.exp(y), s=5, alpha=0.2, color='gray')
 
 # Setting the upper X-axis of the plot (ax3)
-ax32 = ax3.twiny()
-ax32.set_xlabel('MRCA (years)', size=14, labelpad=10)
-ax32.set_xlim([-5, -2])
-ax32.xaxis.set_major_formatter(FuncFormatter(years_formatter))
-ax32.tick_params(length=12, width=1, which='major', direction='inout')
-ax32.tick_params(length=8, width=1, which='minor', direction='inout')
+ax32 = ax3.secondary_xaxis('top', functions=(to_year_2,to_dS))
+ax32.set_xlabel('MRCA (years)', size=14)
+ax32.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax32.tick_params(length=6, width=1, which='minor', direction='inout')
 
 # Plotting fitness over time for different effective population sizes
 fitnesses = [fitness_data[0], fitness_data[1], fitness_data[2], fitness_data[3]]
-ax2.plot(T_generations, theory_fitness, linewidth=3, label='theory', color='k')
-labels = ['N$_{e}$ 1 million', 'N$_{e}$ 1 billion', 'N$_{e}$ 1 trillion', 'N$_{e}$ 1 quadrillion']
+ax2.plot(T_generations, theory_fitness, linewidth=3, label='infinite N$_{e}$', color='k')
+labels = ['N$_{e}$=10$^{6}$', 'N$_{e}$=10$^{9}$', 'N$_{e}$=10$^{12}$', 'N$_{e}$=10$^{15}$']
 
 for fitness, label in zip(fitnesses, labels):
     ax2.plot(T_generations, fitness, linewidth=3, label=label)
@@ -191,12 +200,11 @@ ax2.set_xlim([1, 5000000])
 ax2.set_ylim([0.93, 1])
 
 # Setting the upper X-axis of the plot (ax2)
-ax22 = ax2.twiny()
-ax22.set_xlim(ax2.get_xlim())
-ax22.set_xlabel('years', size=14, labelpad=10)
-ax22.xaxis.set_major_formatter(FuncFormatter(years_formatter1))
-ax22.tick_params(length=12, width=1, which='major', direction='inout')
-ax22.tick_params(length=8, width=1, which='minor', direction='inout')
+# Configure the secondary x axis of the main chart
+ax22 = ax2.secondary_xaxis('top', functions=(to_year,to_gen))
+ax22.set_xlabel('MRCA (years)', size=14)
+ax22.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax22.tick_params(length=6, width=1, which='minor', direction='inout')
 
 # Adjusting layout and showing the plot
 fig.tight_layout()

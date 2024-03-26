@@ -18,6 +18,14 @@ fraction_nonsynonymous = 0.75
 fraction_N_neutral = 1 / 10
 synonymous_rate_per_codon = mutation_rate_per_codon_per_generation * fraction_synonymous
 
+def to_year(x):
+    years = x / (2 * synonymous_rate_per_codon * 365)
+    return years
+
+def to_dS(x):
+    dS=x*(2 * synonymous_rate_per_codon * 365)
+    return dS
+
 # Function for calculating log result
 def calculate_result(x, s, a):
     t = x / (2 * synonymous_rate_per_codon)
@@ -59,13 +67,12 @@ def italicize(text):
     return r'$\it{%s}$' % text
 
 # Specifying folder path
-folder_path = "dnds_flat_files"
+folder_path = "../dnds_flat_files"
 genus_list = set()
 
 # Listing all genus
 for file in os.listdir(folder_path):
     genus_list.add(file.split("_")[0] + '_' + file.split("_")[1])
-genus_list.remove('.DS_Store')
 genus_list = [*genus_list]
 genus_list.sort()
 
@@ -84,7 +91,7 @@ for genus in genus_list:
     # Collect all files corresponding to a genus
     for file in os.listdir(folder_path):
         if file.startswith(genus):
-            genus_to_combine.append(np.loadtxt('dnds_flat_files/' + file, skiprows=1, delimiter=',', usecols=(0, 1)))
+            genus_to_combine.append(np.loadtxt('../dnds_flat_files/' + file, skiprows=1, delimiter=',', usecols=(0, 1)))
 
     # Combine all files of a genus
     combined_genus = genus_to_combine[0]
@@ -161,11 +168,9 @@ lines, labels = axs[0].get_legend_handles_labels()
 axs[0].legend(lines[0:],labels[0:], loc='upper center', bbox_to_anchor=(0.5,-0.2),ncol=5,labelspacing=0.5,fontsize=10,frameon=False)
 
 # Configure the secondary x axis of the main chart
-ax2 = axs[0].twiny()
-ax2.set_xlabel('MRCA (years)', size=14, labelpad=10)
-ax2.set_xlim([-6.09, -1])
-ax2.xaxis.set_major_formatter(FuncFormatter(years_formatter))
-ax2.tick_params(length=10, width=1, which='major', direction='inout', pad=12, labelsize=12)
+ax2 = axs[0].secondary_xaxis('top', functions=(to_year,to_dS))
+ax2.set_xlabel('MRCA (years)', size=14)
+ax2.tick_params(length=10, width=1, which='major', direction='inout',labelsize=12)
 ax2.tick_params(length=6, width=1, which='minor', direction='inout')
 
 print(np.median(collected_rs))

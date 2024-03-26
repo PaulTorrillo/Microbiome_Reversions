@@ -59,14 +59,28 @@ nonneutral_N_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_nons
 
 S_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_synonymous
 
-print(neutral_N_rate_per_codon*500000)
-
 normalization_constant=fraction_synonymous/fraction_nonsynonymous
 
 numpoints=2000000
 
 max_generations=2000000
 
+#For top axis conversion
+def to_year(x):
+    years = x / (365)
+    return years
+
+def to_gen(x):
+    gen=x*(365)
+    return gen
+
+def to_year_2(x):
+    years = x / (2 * S_rate_per_codon * 365)
+    return years
+
+def to_dS(x):
+    dS=x*(2 * S_rate_per_codon * 365)
+    return dS
 
 def small_round(x):
     counter=0
@@ -141,12 +155,12 @@ ax3.legend(fontsize='10',ncol=2,frameon=False)
 
 
 
-folder_path="dnds_flat_files"
+folder_path="../dnds_flat_files"
 genuslist=set()
 for file in os.listdir(folder_path):
     genuslist.add(file.split("_")[0]+'_'+file.split("_")[1])
 print(genuslist)
-genuslist.remove('.DS_Store')
+
 genuslist=[*genuslist]
 genuslist.sort()
 
@@ -155,7 +169,7 @@ for genus in genuslist:
     genustocombine=[]
     for file in os.listdir(folder_path):
         if file.startswith(genus):
-            genustocombine.append(numpy.loadtxt('dnds_flat_files/'+file,skiprows=1,delimiter=',',usecols=(0,1)))
+            genustocombine.append(numpy.loadtxt('../dnds_flat_files/'+file,skiprows=1,delimiter=',',usecols=(0,1)))
     combined_genus=genustocombine[0]
     for i in range(len(genustocombine)):
         if i>0:
@@ -169,18 +183,11 @@ for genus in genuslist:
         y=numpy.log(combined_genus[:, 1])
         ax3.scatter(numpy.exp(x), numpy.exp(y),s=5,alpha=0.2,color='gray')
 
-ax32=ax3.twiny()
-ax32.set_xlabel('MRCA (years)',size=14,labelpad=10)
-
-
-# Define a function to format the ticks on the second axis
-
-
-    # Set the tick formatter for the second axis
-ax32.set_xlim([-5,-2])
-ax32.xaxis.set_major_formatter(FuncFormatter(years_formatter))
-ax32.tick_params(length=12, width=1,which='major',direction='inout')
-ax32.tick_params(length=8, width=1,which='minor',direction='inout')
+# Setting the upper X-axis of the plot (ax3)
+ax32 = ax3.secondary_xaxis('top', functions=(to_year_2,to_dS))
+ax32.set_xlabel('MRCA (years)', size=14)
+ax32.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax32.tick_params(length=6, width=1, which='minor', direction='inout')
 
 
 ax2.plot(T_generations,theory_fitness,linewidth=3,label='theory',color='k')
@@ -199,22 +206,12 @@ ax2.tick_params(length=8, width=1,which='minor',direction='inout')
 ax2.legend(fontsize=10,frameon=False)
 ax2.set_xlim([1,500000])
 ax2.set_ylim([0.99,1])
-ax22 = ax2.twiny()
 
-# Set the limits of the second axis in years
-ax22.set_xlim(ax2.get_xlim())
-ax22.set_xlabel('years', size=14,labelpad=10)
-
-
-
-
-# Set the tick formatter for the second axis
-ax22.xaxis.set_major_formatter(FuncFormatter(years_formatter1))
-
-# Show the plot
-# matplotlib.pyplot.yscale('log')
-ax22.tick_params(length=12, width=1, which='major', direction='inout')
-ax22.tick_params(length=8, width=1, which='minor', direction='inout')
+# Configure the secondary x axis of the main chart
+ax22 = ax2.secondary_xaxis('top', functions=(to_year,to_gen))
+ax22.set_xlabel('years', size=14)
+ax22.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax22.tick_params(length=6, width=1, which='minor', direction='inout')
 
 fig.tight_layout()
 

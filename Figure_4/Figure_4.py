@@ -20,6 +20,14 @@ x=x[1:]
 xrange=xdatamax-xdatamin
 yrange=ydatamax-ydatamin
 
+def to_year(x):
+    years = x / (365)
+    return years
+
+def to_gen(x):
+    gen=x*(365)
+    return gen
+
 ax1.plot(x,xdata,label='observed',color='tab:blue',linewidth='2')
 ax1.plot(x,ydata,label='actual',linewidth='2',color='tab:red')
 
@@ -32,17 +40,17 @@ ax1.set_ylabel('gene d$_N$/d$_S$', size=14)
 ax1.set_yscale('log')
 ax1.tick_params(length=12, width=1, which='major', direction='inout')
 ax1.tick_params(length=8, width=1, which='minor', direction='inout')
-ax12 = ax1.twiny()
-ax12.set_xlim(ax1.get_xlim())
-ax12.set_xlabel('years', size=14,labelpad=10)
+
 
 # Define a function to format the ticks on the second axis
 def years_formatter1(x, pos):
     years = int(x / 365)
     return f'{years}'
-ax12.xaxis.set_major_formatter(FuncFormatter(years_formatter1))
-ax12.tick_params(length=12, width=1, which='major', direction='inout')
-ax12.tick_params(length=8, width=1, which='minor', direction='inout')
+# Configure the secondary x axis of the main chart
+ax12 = ax1.secondary_xaxis('top', functions=(to_year,to_gen))
+ax12.set_xlabel('years', size=14)
+ax12.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax12.tick_params(length=6, width=1, which='minor', direction='inout')
 mutation_rate_per_bp_per_generation=10**-9
 mutation_rate_per_codon_per_generation=3*mutation_rate_per_bp_per_generation
 s=3.5*10**-5
@@ -56,6 +64,16 @@ S_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_synonymous
 normalization_constant=fraction_synonymous/fraction_nonsynonymous
 numpoints=20000
 max_generations=2000000
+#For top axis conversion
+
+def to_year_2(x):
+    years = x / (2 * S_rate_per_codon * 365)
+    return years
+
+def to_dS(x):
+    dS=x*(2 * S_rate_per_codon * 365)
+    return dS
+
 def calculate_log_result(x, a, b):
     t = x / (2 * S_rate_per_codon)
     neutnon = a * mutation_rate_per_codon_per_generation * fraction_nonsynonymous * core_genome_codons * 2 * t
@@ -120,11 +138,10 @@ ax3.set_ylabel('d$_N$/d$_S$',size=14,rotation='vertical')
 ax3.set_xlim([0.00001,0.005])
 ax3.set_ylim([0.05,5])
 ax3.legend(fontsize='10',ncol=2,frameon=False)
-folder_path="dnds_flat_files"
+folder_path="../dnds_flat_files"
 genuslist=set()
 for file in os.listdir(folder_path):
     genuslist.add(file.split("_")[0]+'_'+file.split("_")[1])
-genuslist.remove('.DS_Store')
 genuslist=[*genuslist]
 genuslist.sort()
 
@@ -132,7 +149,7 @@ for genus in genuslist:
     genustocombine=[]
     for file in os.listdir(folder_path):
         if file.startswith(genus):
-            genustocombine.append(numpy.loadtxt('dnds_flat_files/'+file,skiprows=1,delimiter=',',usecols=(0,1)))
+            genustocombine.append(numpy.loadtxt('../dnds_flat_files/'+file,skiprows=1,delimiter=',',usecols=(0,1)))
     combined_genus=genustocombine[0]
     for i in range(len(genustocombine)):
         if i>0:
@@ -143,23 +160,23 @@ for genus in genuslist:
         myline = numpy.linspace(numpy.log(0.000001), numpy.log(1), 1000)
         popt, pcov = scipy.optimize.curve_fit(calculate_log_result, numpy.exp(x), y)
         ax3.scatter(numpy.exp(x), numpy.exp(y),s=5,alpha=0.25,color='gray')
-ax32=ax3.twiny()
-ax32.set_xlabel('MRCA (years)',size=14,labelpad=10)
-ax32.set_xlim([-5,-2])
-ax32.xaxis.set_major_formatter(FuncFormatter(years_formatter2))
-ax32.tick_params(length=12, width=1,which='major',direction='inout')
-ax32.tick_params(length=8, width=1,which='minor',direction='inout')
+# Setting the upper X-axis of the plot (ax3)
+ax32 = ax3.secondary_xaxis('top', functions=(to_year_2,to_dS))
+ax32.set_xlabel('MRCA (years)', size=14)
+ax32.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax32.tick_params(length=6, width=1, which='minor', direction='inout')
+
+
 ax2.plot(T_generations, sim_fitness, linewidth=2, label='simulation')
 ax2.set_xlabel('bacterial generations',size=14)
 ax2.set_ylabel('relative fitness of population',size=14,rotation='vertical')
 ax2.tick_params(length=12, width=1,which='major',direction='inout')
 ax2.tick_params(length=8, width=1,which='minor',direction='inout')
 ax2.set_xlim([1,2000000])
-ax22 = ax2.twiny()
-ax22.set_xlim(ax2.get_xlim())
-ax22.set_xlabel('years', size=14,labelpad=10)
-ax22.xaxis.set_major_formatter(FuncFormatter(years_formatter1))
-ax22.tick_params(length=12, width=1, which='major', direction='inout')
-ax22.tick_params(length=8, width=1, which='minor', direction='inout')
+# Configure the secondary x axis of the main chart
+ax22 = ax2.secondary_xaxis('top', functions=(to_year,to_gen))
+ax22.set_xlabel('years', size=14)
+ax22.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
+ax22.tick_params(length=6, width=1, which='minor', direction='inout')
 fig.tight_layout()
 plt.show()

@@ -17,6 +17,14 @@ synonymous_fraction=0.25
 nonsynonymous_fraction=0.75
 synonymous_rate_per_codon=codon_mutation_rate_per_generation*synonymous_fraction
 
+def to_year(x):
+    years = x / (2 * synonymous_rate_per_codon * 365)
+    return years
+
+def to_dS(x):
+    dS=x*(2 * synonymous_rate_per_codon * 365)
+    return dS
+
 # Define the logarithmic function for calculating the results
 def calculate_result(x, s, a, b):
     intermediate_time = x / (2 * synonymous_rate_per_codon)
@@ -62,14 +70,13 @@ def italicize(text):
     return r'$\it{%s}$' % text
 
 # Directory containing the data files
-data_folder_path="dnds_flat_files"
+data_folder_path="../dnds_flat_files"
 collected_rs=[]
 
 # Create a list of genus names from the file names
 genus_list=set()
 for filename in os.listdir(data_folder_path):
     genus_list.add(filename.split("_")[0] + '_' + filename.split("_")[1])
-genus_list.remove('.DS_Store')  # Remove system file from list
 genus_list = list(genus_list)
 genus_list.sort()
 
@@ -190,13 +197,12 @@ axs[0].set_ylim([0.05, 10])
 lines, labels = axs[0].get_legend_handles_labels()
 axs[0].legend(lines, labels, loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=5, labelspacing=0.5, fontsize=10, frameon=False)
 
-# Add a second x-axis to the top of the main plot, set its label, limit, formatter, and tick parameters
-second_x_axis = axs[0].twiny()
-second_x_axis.set_xlabel('MRCA (years)', size=12)
-second_x_axis.set_xlim([-6.09, -1])
-second_x_axis.xaxis.set_major_formatter(FuncFormatter(format_years_scientifically))
-second_x_axis.tick_params(length=10, width=1, which='major', direction='inout', labelsize=10)
-second_x_axis.tick_params(length=6, width=1, which='minor', direction='inout')
+# Configure the secondary x axis of the main chart
+ax2 = axs[0].secondary_xaxis('top', functions=(to_year,to_dS))
+ax2.set_xlabel('MRCA (years)', size=14)
+ax2.tick_params(length=10, width=1, which='major', direction='inout',labelsize=12)
+ax2.tick_params(length=6, width=1, which='minor', direction='inout')
+
 print(numpy.max(collected_rs))
 print(numpy.min(collected_rs))
 # Adjust layout to make everything fit properly and then display the plot
