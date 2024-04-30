@@ -1,1 +1,1 @@
-dN/dS files provides to run the simulation. Bacteroides vulgatus was one species that was manually removed (is in the dataset but not in this directory) as while it did satisfy are cutoff of having ten data point below 0.0005, they were only slightly below. This was also coupled with bacteroides vulgatus having many datapoints at higher diverges where fitting the data with scipy optimize fit, fits a much smaller crossover at high divergence rates unlike other species. Thus, to get the a total of ten species visualized, it was chosen for removal to get to ten species.
+
