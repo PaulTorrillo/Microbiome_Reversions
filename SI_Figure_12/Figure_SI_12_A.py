@@ -57,16 +57,13 @@ def calculate_weighted_sum(p):
     # Multiply the vector by the matrix 100 times
     resultant_list = []
     indices = np.arange(n)
-    print(indices)
     for i in range(number):
         v = A.dot(v)
         v = v / np.sum(v)
         resultant_list.append((n_loci*np.dot(indices, v) / (3*(i + 1)*100*500000*7.5*10**-10)) + 0.1)
 
-    print(p)
-    print(np.sum(v))
     weighted_sum = np.dot(indices, v)
-    print(weighted_sum)
+
     return resultant_list
 
 # Function for calculating log result
@@ -110,7 +107,7 @@ def italicize(text):
     return r'$\it{%s}$' % text
 
 # Specifying folder path
-folder_path = "dnds_flat_files"
+folder_path = "../dnds_flat_files"
 genus_list = set()
 
 # Listing all genus
@@ -137,7 +134,7 @@ for genus in genus_list:
     # Collect all files corresponding to a genus
     for file in os.listdir(folder_path):
         if file.startswith(genus):
-            genus_to_combine.append(np.loadtxt('dnds_flat_files/' + file, skiprows=1, delimiter=',', usecols=(0, 1)))
+            genus_to_combine.append(np.loadtxt('../dnds_flat_files/' + file, skiprows=1, delimiter=',', usecols=(0, 1)))
 
     # Combine all files of a genus
     combined_genus = genus_to_combine[0]
