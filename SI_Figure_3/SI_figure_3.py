@@ -59,13 +59,12 @@ def italicize(text):
     return r'$\it{%s}$' % text
 
 # Specifying folder path
-folder_path = "dnds_flat_files"
+folder_path = "../dnds_flat_files"
 genus_list = set()
 
 # Listing all genus
 for file in os.listdir(folder_path):
     genus_list.add(file.split("_")[0] + '_' + file.split("_")[1])
-genus_list.remove('.DS_Store')
 genus_list = [*genus_list]
 genus_list.sort()
 
@@ -86,7 +85,7 @@ for genus in genus_list:
     # Collect all files corresponding to a genus
     for file in os.listdir(folder_path):
         if file.startswith(genus):
-            genus_to_combine.append(np.loadtxt('dnds_flat_files/' + file, skiprows=1, delimiter=',', usecols=(0, 1)))
+            genus_to_combine.append(np.loadtxt('../dnds_flat_files/' + file, skiprows=1, delimiter=',', usecols=(0, 1)))
 
     # Combine all files of a genus
     combined_genus = genus_to_combine[0]
@@ -110,54 +109,53 @@ for genus in genus_list:
         #axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), *popt)) * np.exp(myline))
 
 # Further plot configuration and display
-residuals=y_mega-calculate_log_result(np.exp(x_mega),3.7E-5,0.1)
+residuals=y_mega-calculate_log_result(np.exp(x_mega),3.5E-5,0.10)
 var=y_mega-np.mean(y_mega)
 rss=np.sum(residuals**2)
 tss = np.sum(var ** 2)
 z=round(1-(rss/tss),3)
-print(z)
-axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.7E-5,0.1)),
-               label='s=3.7 x 10$^{-5}$, N$_{e}$ = 10$^{15}$, R$^2$ = '+str(z),
-              linewidth='3')
-axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.7E-5,0.1)) * np.exp(myline),
-               label='s=3.7 x 10$^{-5}$, N$_{e}$ = 10$^{15}$, R$^2$ = '+str(z),
-              linewidth='3')
-residuals=y_mega-calculate_log_result(np.exp(x_mega),4.9E-5,0.1)
-var=y_mega-np.mean(y_mega)
-rss=np.sum(residuals**2)
-tss = np.sum(var ** 2)
-z=round(1-(rss/tss),3)
-print(z)
-axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 4.9E-5,0.1)),
-               label='s=4.9 x 10$^{-5}$, N$_{e}$ = 10$^{12}$, R$^2$ = '+str(z),
-              linewidth='3')
 
-axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 4.9E-5,0.1)) * np.exp(myline),
-               label='s=4.9 x 10$^{-5}$, N$_{e}$ = 10$^{12}$, R$^2$ = '+str(z),
+axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-5,0.1)),
+               label='s=3.5 x 10$^{-5}$, R$^2$ = '+str(z),
               linewidth='3')
-residuals=y_mega-calculate_log_result(np.exp(x_mega),7.3E-5,0.1)
+axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-5,0.1)) * np.exp(myline),
+               label='s=3.5 x 10$^{-5}$, R$^2$ = '+str(z),
+              linewidth='3')
+residuals=y_mega-calculate_log_result(np.exp(x_mega),3.5E-4,0.1)
 var=y_mega-np.mean(y_mega)
 rss=np.sum(residuals**2)
 tss = np.sum(var ** 2)
 z=round(1-(rss/tss),3)
 print(z)
-axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 7.3E-5,0.1)),
-               label='s=7.3 x 10$^{-5}$, N$_{e}$ = 10$^{9}$, R$^2$ = '+str(z),
+axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-4,0.1)),
+               label='s=3.5 x 10$^{-4}$, R$^2$ = '+str(z),
               linewidth='3')
-axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 7.3E-5,0.1)) * np.exp(myline),
-               label='s=7.3 x 10$^{-5}$, N$_{e}$ = 10$^{9}$, R$^2$ = '+str(z),
+axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-4,0.1)) * np.exp(myline),
+               label='s=3.5 x 10$^{-4}$, R$^2$ = '+str(z),
               linewidth='3')
-residuals=y_mega-calculate_log_result(np.exp(x_mega),15E-5,0.1)
+residuals=y_mega-calculate_log_result(np.exp(x_mega),3.5E-3,0.1)
 var=y_mega-np.mean(y_mega)
 rss=np.sum(residuals**2)
 tss = np.sum(var ** 2)
 z=round(1-(rss/tss),3)
-print(z)
-axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 15E-5,0.1)),
-               label='s=1.5 x 10$^{-4}$, N$_{e}$ = 10$^{6}$, R$^2$ = '+str(z),
+
+axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-3,0.1)),
+               label='s=3.5 x 10$^{-3}$, R$^2$ = '+str(z),
               linewidth='3')
-axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 15E-5,0.1)) * np.exp(myline),
-               label='s=1.5 x 10$^{-4}$, N$_{e}$ = 10$^{6}$, R$^2$ = '+str(z),
+axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-3,0.1)) * np.exp(myline),
+               label='s=3.5 x 10$^{-3}$, R$^2$ = '+str(z),
+              linewidth='3')
+residuals=y_mega-calculate_log_result(np.exp(x_mega),3.5E-2,0.1)
+var=y_mega-np.mean(y_mega)
+rss=np.sum(residuals**2)
+tss = np.sum(var ** 2)
+z=round(1-(rss/tss),3)
+
+axs[0].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-2,0.1)),
+               label='s=3.5 x 10$^{-2}$, R$^2$ = '+str(z),
+              linewidth='3')
+axs[1].plot(np.exp(myline), np.exp(calculate_log_result(np.exp(myline), 3.5E-2,0.1)) * np.exp(myline),
+               label='s=3.5 x 10$^{-2}$, R$^2$ = '+str(z),
               linewidth='3')
 # Set boundaries for the inset chart
 axs[1].set_xlim([0.0000, 0.0006])

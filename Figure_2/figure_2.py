@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import ScalarFormatter
 
 # Configuring plot parameters
 plt.rcParams['font.family'] = 'Helvetica'
@@ -62,12 +63,12 @@ x_years = x_days / 365
 
 # Plot first set of data
 ax1.plot(x_days, np.exp(-(0.0010125 * 10000 * (1 - np.exp(-0.35 * 0.0001 * x_days)) / 0.35)),
-         linewidth=3, label='theory', color='k', zorder=100)
-ax1.plot(x_days, y_data, linewidth=3, label='continuous selection', linestyle='--', color='tab:gray')
+         linewidth=3, label='theory', color='k', zorder=0)
+ax1.plot(x_days, y_data, linewidth=3, label='simulation N$_{e}$=10$^{18}$', linestyle=':', color='tab:gray')
 
 # Plot second set of data
-ydata2 = np.loadtxt('periodic.txt')
-ax1.plot(x_days, ydata2, linewidth=3, linestyle=':', label='periodic selection', color='tab:brown')
+#ydata2 = np.loadtxt('periodic.txt')
+#ax1.plot(x_days, ydata2, linewidth=3, linestyle=':', label='periodic selection', color='tab:brown')
 
 # Setting plot attributes
 ax1.legend(fontsize=10, frameon=False)
@@ -205,7 +206,10 @@ ax22 = ax2.secondary_xaxis('top', functions=(to_year,to_gen))
 ax22.set_xlabel('MRCA (years)', size=14)
 ax22.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
 ax22.tick_params(length=6, width=1, which='minor', direction='inout')
-
+# Set the x-axis formatter to use an offset (exponent) and display it in math text
+formatter2 = ScalarFormatter(useOffset=True,useMathText=True)
+formatter2.set_powerlimits((-3, 3))
+ax2.xaxis.set_major_formatter(formatter2)
 # Adjusting layout and showing the plot
 fig.tight_layout()
 plt.show()

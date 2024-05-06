@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 import os
 import scipy
 from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import ScalarFormatter
+
+# Function to format the tick labels to three significant figures
+def format_tick(val, pos):
+    return '{:.3g}'.format(val)
 
 # Set font for matplotlib
 matplotlib.rcParams['font.family'] = 'Helvetica'
@@ -63,7 +68,7 @@ def optimize_and_return_third_param(x,y):
 
 def optimize_and_return_ratio_first_third_params(x,y):
     optimal_params, param_covariances = scipy.optimize.curve_fit(log_result_func, numpy.exp(x), y, bounds=([0, 0, 0], [numpy.inf, numpy.inf, numpy.inf]),p0=[1E5,0.1,20])
-    return optimal_params[0]/optimal_params[2]
+    return optimal_params[0]
 
 # Function to italicize text
 def italicize(text):
@@ -86,6 +91,8 @@ second_inset = sub_plots.inset_axes([0.67, 0.4, 0.32, 0.25])
 
 # Counter for tracking iteration
 iteration_counter = 1
+list_of_loci=[]
+list_of_times=[]
 
 # Loop over the list of genera
 for genus in genus_list:
@@ -121,14 +128,15 @@ for genus in genus_list:
         upper_error = upper_confidence - optimal_params[2]
 
         second_inset.errorbar(iteration_counter, optimal_params[2], yerr=[[lower_error], [upper_error]], fmt='o', capsize=3)
-
         bootstrap_result2 = scipy.stats.bootstrap((x_values, y_values), optimize_and_return_ratio_first_third_params, paired=True, n_resamples=999, method='basic')
         lower_confidence2, upper_confidence2 = bootstrap_result2.confidence_interval
 
-        lower_error2 = min((optimal_params[0]/optimal_params[2]) , (optimal_params[0]/optimal_params[2]) - lower_confidence2)
-        upper_error2 = upper_confidence2 - (optimal_params[0]/optimal_params[2])
+        lower_error2 = min((optimal_params[0]) , (optimal_params[0]) - lower_confidence2)
+        upper_error2 = upper_confidence2 - (optimal_params[0])
 
-        first_inset.errorbar(iteration_counter, (optimal_params[0]/optimal_params[2]) , yerr=[[lower_error2], [upper_error2]], fmt='o', capsize=3)
+        first_inset.errorbar(iteration_counter, (optimal_params[0]) , yerr=[[lower_error2], [upper_error2]], fmt='o', capsize=3)
+        print('second_one')
+        print(optimal_params[0])
 
         # Increment counter, scatter plot data and draw the fitted curve
         iteration_counter += 1
@@ -146,8 +154,9 @@ sub_plots.set_yscale('log')
 second_inset.set_ylabel('$n_{loci}$', rotation='vertical', size=10)
 second_inset.set_ylim([-10, 110])
 
-first_inset.set_ylim([-200, 2200])
-first_inset.set_ylabel('$T_{adapt}$', rotation='vertical', size=10)
+#first_inset.set_ylim([-200, 2200])
+
+first_inset.set_ylabel(r'$\tau_{flip}$', rotation='vertical', size=10)
 
 # Set tick parameters for the main plot
 sub_plots.tick_params(length=10, width=1, which='major', direction='inout', labelsize=10)
@@ -161,7 +170,7 @@ second_inset.tick_params(axis='x', which='both', bottom=False, top=False)
 first_inset.set_xticks([])
 first_inset.tick_params(length=8, width=1, which='major', direction='inout', labelsize=10)
 first_inset.tick_params(axis='x', which='both', bottom=False, top=False)
-
+first_inset.yaxis.set_major_formatter(FuncFormatter(format_tick))
 # Set x- and y-labels for the main plot
 sub_plots.set_xlabel('d$_S$ (core genome synonymous divergence)', size=12)
 sub_plots.set_ylabel('d$_N$/d$_S$', size=12, rotation='vertical')

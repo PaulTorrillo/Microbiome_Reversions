@@ -254,7 +254,8 @@ if __name__ == '__main__':
             maxesfz.append(numpy.mean(maxesf,axis=0))
             mutationsz.append(numpy.mean(mutations,axis=0))
         save=[]
-        mutationsz=mutationsz[0]
+        #This is added to save off things correctly.
+        mutationsz = numpy.mean(mutationsz, axis=0)
         #Saving of the simulations and only keeping every 100th generation to save on space
         for i in range(len(mutationsz)):
             if i%100==0:

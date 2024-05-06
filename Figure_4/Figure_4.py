@@ -4,17 +4,19 @@ import matplotlib.pyplot as plt
 import os
 import scipy
 from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import ScalarFormatter
+import pandas as pd
 matplotlib.rcParams['font.family'] = 'Helvetica'
 fig = plt.figure(figsize=(8.5, 8))
 ax3 = fig.add_subplot(2, 1, 1)
-ax2 = fig.add_subplot(2, 2, 3)
-ax1 = fig.add_subplot(2, 2, 4)
-xdata=numpy.loadtxt("r1.txt")
-xdatamin=numpy.loadtxt("min1.txt")
-xdatamax=numpy.loadtxt("max1.txt")
-ydata=numpy.loadtxt("r2.txt")
-ydatamin=numpy.loadtxt("min2.txt")
-ydatamax=numpy.loadtxt("max2.txt")
+ax2 = fig.add_subplot(2, 2, 4)
+ax1 = fig.add_subplot(2, 2, 3)
+xdata=numpy.loadtxt("r1_upgrade.txt", usecols=1)
+xdatamin=numpy.loadtxt("min1_upgrade.txt",usecols=1)
+xdatamax=numpy.loadtxt("max1_upgrade.txt",usecols=1)
+ydata=numpy.loadtxt("r2_upgrade.txt",usecols=1)
+ydatamin=numpy.loadtxt("min2_upgrade.txt",usecols=1)
+ydatamax=numpy.loadtxt("max2_upgrade.txt",usecols=1)
 x=numpy.linspace(0,20000000,21)
 x=x[1:]
 xrange=xdatamax-xdatamin
@@ -28,8 +30,8 @@ def to_gen(x):
     gen=x*(365)
     return gen
 
-ax1.plot(x,xdata,label='observed',color='tab:blue',linewidth='2')
-ax1.plot(x,ydata,label='actual',linewidth='2',color='tab:red')
+ax1.plot(x,xdata,label='permanant adaptations',color='tab:blue',linewidth='2')
+ax1.plot(x,ydata,label='transient adaptations',linewidth='2',color='tab:red')
 
 ax1.legend(fontsize=10,frameon=False)
 ax1.fill_between(x,xdatamin,xdatamax,color='tab:blue',alpha=0.25)
@@ -64,6 +66,8 @@ S_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_synonymous
 normalization_constant=fraction_synonymous/fraction_nonsynonymous
 numpoints=20000
 max_generations=2000000
+T_adapt=840
+n_loci=55
 #For top axis conversion
 
 def to_year_2(x):
@@ -102,11 +106,11 @@ synonymous_muts=numpy.zeros(numpoints)
 neutral_nonsynonymous_muts=numpy.zeros(numpoints)
 dN_dS_theory=numpy.zeros(numpoints)
 theory_fitness=numpy.zeros(numpoints)
-Ns_sim_act=numpy.loadtxt("nonneutralreversions.txt")
+Ns_sim_act=numpy.loadtxt("small_bottleneck_reversions.txt")
 dN_dS_sim_obs=numpy.zeros(numpoints)
-Ns_sim_obs=numpy.loadtxt("nonneutralmutations.txt")
+Ns_sim_obs=numpy.loadtxt("small_bottleneck_mutations.txt")
 dN_dS_sim_act=numpy.zeros(numpoints)
-Ns_hitch=numpy.loadtxt("nonneutralhitch.txt")
+Ns_hitch=numpy.loadtxt("small_bottleneck_hitch.txt")
 dN_dS_1_quad=numpy.zeros(numpoints)
 sim_fitness=numpy.ones(numpoints)
 
@@ -114,7 +118,7 @@ for n in range(0,numpoints):
 
     synonymous_muts[n]=S_rate_per_codon*core_genome_codons*2*T_generations[n]
     neutral_nonsynonymous_muts[n]=neutral_N_rate_per_codon*core_genome_codons*2*T_generations[n]
-    dN_dS_theory[n]=normalization_constant*((((neutral_nonsynonymous_muts[n]+2*nonneutral_N_rate_per_codon*core_genome_codons*((1-numpy.exp(-s*T_generations[n]))/s))/(synonymous_muts[n]))))
+    dN_dS_theory[n]=normalization_constant*((((neutral_nonsynonymous_muts[n]+(n_loci*(1-numpy.exp((-2*T_generations[n])/(n_loci*T_adapt)))))/(synonymous_muts[n]))))
     theory_fitness[n] = (1-s)**(
                 nonneutral_N_rate_per_codon * core_genome_codons * ((1 - numpy.exp(-s * T_generations[n])) / s))
     dN_dS_sim_obs[n] = normalization_constant * ((((neutral_nonsynonymous_muts[n] + 2 * Ns_sim_obs[n]) / (synonymous_muts[n]))))
@@ -162,21 +166,38 @@ for genus in genuslist:
         ax3.scatter(numpy.exp(x), numpy.exp(y),s=5,alpha=0.25,color='gray')
 # Setting the upper X-axis of the plot (ax3)
 ax32 = ax3.secondary_xaxis('top', functions=(to_year_2,to_dS))
+
 ax32.set_xlabel('MRCA (years)', size=14)
 ax32.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
 ax32.tick_params(length=6, width=1, which='minor', direction='inout')
 
+# Set the x-axis formatter to use an offset (exponent) and display it in math text
+formatter2 = ScalarFormatter(useOffset=True,useMathText=True)
+formatter2.set_powerlimits((-3, 3))
+ax12.xaxis.set_major_formatter(formatter2)
+ax1.xaxis.set_major_formatter(formatter2)
+data = {
+    'Category': ['transcription (overall)','membrane biogenesis (overall)','ion transport and metabolism\n(outer membrane)', 'signal transduction (cytoplasmic)','membrane biogenesis (cytoplasmic)'],
+    'Difference': [9.401510996,9.079884635,9.391843309, 17.89206136, 43.67614433]
+}
+p_values = [4.62E-03, 3.42E-07, 2.48E-03, 2.34E-02, 1.25E-03, 2.30E-45]
+df = pd.DataFrame(data)
 
-ax2.plot(T_generations, sim_fitness, linewidth=2, label='simulation')
-ax2.set_xlabel('bacterial generations',size=14)
-ax2.set_ylabel('relative fitness of population',size=14,rotation='vertical')
+# Creating the bar plot
+
+bars = ax2.bar(df['Category'], df['Difference'])
+
+
+
+# Adding the p-values as text annotations above the bars
 ax2.tick_params(length=12, width=1,which='major',direction='inout')
 ax2.tick_params(length=8, width=1,which='minor',direction='inout')
-ax2.set_xlim([1,2000000])
-# Configure the secondary x axis of the main chart
-ax22 = ax2.secondary_xaxis('top', functions=(to_year,to_gen))
-ax22.set_xlabel('years', size=14)
-ax22.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
-ax22.tick_params(length=6, width=1, which='minor', direction='inout')
+ax2.set_ylabel('TTA/TCA usage enrichment',size=12)
+ax2.tick_params(axis='x', labelsize=10,rotation=30)
+
+# Setting horizontal alignment for x-axis labels
+for label in ax2.get_xticklabels():
+    label.set_ha('right')
+ax2.set_ylim([0,50])
 fig.tight_layout()
 plt.show()

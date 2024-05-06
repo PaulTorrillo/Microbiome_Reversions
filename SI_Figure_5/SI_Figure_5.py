@@ -9,7 +9,7 @@ import os
 
 from matplotlib.ticker import FuncFormatter
 from matplotlib.gridspec import GridSpec
-
+from matplotlib.ticker import ScalarFormatter
 matplotlib.rcParams['font.family'] = 'Helvetica'
 
 fig = plt.figure(figsize=(8.5, 8))
@@ -61,9 +61,9 @@ S_rate_per_codon=mutation_rate_per_codon_per_generation*fraction_synonymous
 
 normalization_constant=fraction_synonymous/fraction_nonsynonymous
 
-numpoints=2000000
+numpoints=50000
 
-max_generations=2000000
+max_generations=5000000
 
 #For top axis conversion
 def to_year(x):
@@ -106,13 +106,10 @@ dN_dS_theory=numpy.zeros(numpoints)
 theory_fitness=numpy.zeros(numpoints)
 
 
-Ns_sim=numpy.loadtxt("neutralmutations.txt")
+Ns_sim= numpy.loadtxt("higher_mutation.txt")
 dN_dS_sim=numpy.zeros(numpoints)
 sim_fitness=numpy.ones(numpoints)
 
-Ns_exclude_adap=numpy.loadtxt("neutralhitchhikers.txt")
-dN_dS_exclude_adap=numpy.zeros(numpoints)
-exclude_adap_fitness=numpy.ones(numpoints)
 
 for n in range(0,numpoints):
 
@@ -126,19 +123,15 @@ for n in range(0,numpoints):
     theory_fitness[n] = (1-s)**(
                 nonneutral_N_rate_per_codon * core_genome_codons * ((1 - numpy.exp(-s * T_generations[n])) / s))
 
-    dN_dS_sim[n] = normalization_constant * ((((neutral_nonsynonymous_muts[n] + 2 * Ns_sim[n]) / (synonymous_muts[n]))))
+    dN_dS_sim[n] = normalization_constant * ((((2 * Ns_sim[n]) / (synonymous_muts[n]))))
 
     sim_fitness[n] = (1 - s) ** Ns_sim[n]
 
-    dN_dS_exclude_adap[n] = normalization_constant * ((((neutral_nonsynonymous_muts[n] + 2 * Ns_exclude_adap[n]) / (synonymous_muts[n]))))
 
-    exclude_adap_fitness[n] = (1 - s) ** Ns_exclude_adap[n]
-
-ax3.plot(S_rate_per_codon*2*T_generations,dN_dS_theory,linewidth=3,label='theory',color='k')
+#ax3.plot(S_rate_per_codon*2*T_generations,dN_dS_theory,linewidth=3,label='infinite N$_{e}$',color='k')
 
 
-ax3.plot(S_rate_per_codon * 2 * T_generations, dN_dS_sim, linewidth=3, label='simulation')
-ax3.plot(S_rate_per_codon * 2 * T_generations, dN_dS_exclude_adap, linewidth=3, label='simulation (adaptations excluded in d$_N$/d$_S$ calculation)', color='tab:blue', linestyle=':')
+ax3.plot(S_rate_per_codon * 2 * T_generations, dN_dS_sim, linewidth=3, label='simulation N$_{e}$=10$^{9}$')
 
 
 ax3.plot(S_rate_per_codon*2*T_generations,numpy.ones_like(dN_dS_theory),linewidth=3,label='d$_N$/d$_S$ = 1',linestyle='--',color='k')
@@ -159,8 +152,6 @@ folder_path="../dnds_flat_files"
 genuslist=set()
 for file in os.listdir(folder_path):
     genuslist.add(file.split("_")[0]+'_'+file.split("_")[1])
-print(genuslist)
-
 genuslist=[*genuslist]
 genuslist.sort()
 
@@ -190,10 +181,10 @@ ax32.tick_params(length=10, width=1, which='major', direction='inout',labelsize=
 ax32.tick_params(length=6, width=1, which='minor', direction='inout')
 
 
-ax2.plot(T_generations,theory_fitness,linewidth=3,label='theory',color='k')
+ax2.plot(T_generations,theory_fitness,linewidth=3,label='infinite N$_{e}$',color='k')
 
 
-ax2.plot(T_generations, exclude_adap_fitness, linewidth=3, label='simulation')
+ax2.plot(T_generations, sim_fitness, linewidth=3, label='simulation N$_{e}$=10$^{9}$')
 
 
 
@@ -204,15 +195,18 @@ ax2.set_ylabel('relative fitness',size=14,rotation='vertical')
 ax2.tick_params(length=12, width=1,which='major',direction='inout')
 ax2.tick_params(length=8, width=1,which='minor',direction='inout')
 ax2.legend(fontsize=10,frameon=False)
-ax2.set_xlim([1,500000])
-ax2.set_ylim([0.99,1])
+ax2.set_xlim([1,5000000])
+ax2.set_ylim([0.91,1])
 
 # Configure the secondary x axis of the main chart
 ax22 = ax2.secondary_xaxis('top', functions=(to_year,to_gen))
 ax22.set_xlabel('years', size=14)
 ax22.tick_params(length=10, width=1, which='major', direction='inout',labelsize=10)
 ax22.tick_params(length=6, width=1, which='minor', direction='inout')
-
+# Set the x-axis formatter to use an offset (exponent) and display it in math text
+formatter2 = ScalarFormatter(useOffset=True,useMathText=True)
+formatter2.set_powerlimits((-3, 3))
+ax2.xaxis.set_major_formatter(formatter2)
 fig.tight_layout()
 
 plt.show()
