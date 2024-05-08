@@ -53,6 +53,7 @@ class allele:
         mutantclasses=numpy.random.multinomial(numberofmutants, numpy.divide(self.genotype, possiblemutations)) #Specific types
         #of those mutants are then determined by the multinomial distribution
         totalnewmuts=[]
+
         for i in range(len(mutantclasses)):
             mutantnum=mutantclasses[i]
             newbens=0
@@ -69,6 +70,7 @@ class allele:
                 newmuts[5]=holder
                 newmuts[4]=0
             totalnewmuts.append(newmuts) #Count total number of new mutants
+
         self.size=self.size-numberofmutants #Remove mutants from population
         #Need to update appropriate classes
         for i in range(len(totalnewmuts)):
@@ -89,27 +91,34 @@ class allele:
                         else:
                             mutantstoadd[mkey]=totalnewmuts[i][j]
         return mutantstoadd
+
     def get_nf(self): #Returns population multiplied by selective advantage
         toproduct=1
         for i in range(4):
             toproduct=toproduct*(f_coefs[i]**self.genotype[i]) #Calulate selective advantage
         return toproduct*self.size
+
     def get_f(self):
         toproduct=1
         for i in range(4):
             toproduct=toproduct*(f_coefs[i]**self.genotype[i]) #Calulate selective advantage
         return toproduct
+
     def increase_size(self,value): #Increasing size (for adding mutants)
         self.size=self.size+value
+
     def get_size(self): #Return size
         return self.size
+
     def get_reversions(self): #Return number of reversions multiplied by population (reversion mass?)
         return self.size*self.genotype[5]
+
     def get_mutations(self):
         tosum=0
         for i in range(1,4):
             tosum=tosum+self.genotype[i] #Calulate selective advantage
         return tosum*self.size
+
     def bottlenecked(self, value): #Make sure genetic classes are carried over correctly during bottleneck
         self.size=value
         self.genotype[4]=self.genotype[4]+self.genotype[0]
@@ -118,6 +127,7 @@ class allele:
         for i in range(len(self.genotype) - 1):
             newgeno = newgeno + ':' + str(self.genotype[i + 1])
         return (newgeno, self.size)
+
 if __name__ == '__main__':
     for jm in range(0,4): #This is an outer loop that allows us to change capacity in this code
 
@@ -128,7 +138,9 @@ if __name__ == '__main__':
         maxfz = []
         maxesfz = []
         mutationsz = []
+
         for zed in range(1): #Another loop in case you want to further manipulations (unusued here)
+
             #Setting aside some lists to fill up for each run
             reversions = [None]*numberofruns
             maxes=[None]*numberofruns
@@ -136,8 +148,9 @@ if __name__ == '__main__':
             maxf = [None] * numberofruns
             maxesf=[None]*numberofruns
             mutations=[None]*numberofruns
+
             for u in range(numberofruns): #If you want to take the average of multiple runs (unneeded in this scenario)
-                print(numberofruns*zed+u)
+
                 numbergens=5000000
                 capacity = 10**(6+3*jm)
                 bottleneckprob =0 #Probability of bottleneck though unused here
@@ -154,6 +167,7 @@ if __name__ == '__main__':
                 maxesf[u] = []
                 avgf[u]=numpy.zeros(numbergens)
                 cumulativebeneficialmuts=0
+
                 for k in range(numbergens):
                     currentpopsize=min(math.ceil(currentpopsize+(currentpopsize*(1-(currentpopsize/capacity)))),capacity) #Use logistic growth
                     #model with sharp cut off at capacity
@@ -180,6 +194,7 @@ if __name__ == '__main__':
                     populationsize=0
                     spec_size_list=[]
                     spec_name_list=[]
+
                     for x in currentclasses:
                         spec_size=currentclasses[x].get_size()
                         spec_f=currentclasses[x].get_f()
@@ -200,23 +215,23 @@ if __name__ == '__main__':
                         avgf[u][k]=avgf[u][k]+currentclasses[x].get_nf()
                         reversions[u][k]=reversions[u][k]+currentclasses[x].get_reversions()
                         mutations[u][k]=mutations[u][k]+currentclasses[x].get_mutations()
+
                     for x in marked:
                         del currentclasses[x]
 
                     #Printing out some summary statistics and adding to lists keeping data
-                    print(k)
-                    print(len(currentclasses))
-                    #print(populationsize)
-                    print(maxspec)
-                    print(currentmaxf)
-                    print(currentmaxfpop/populationsize)
-                    reversions[u][k]=reversions[u][k]/populationsize
-                    print(reversions[u][k])
+                    print("Current Iteration "+str(k))
+                    print("Number of Unique Classes "+str(len(currentclasses)))
+                    print("Population Size "+str(populationsize))
+                    print("Current Max Species "+str(maxspec))
+                    print("Current Max Fitness "+str(currentmaxf))
+                    print("Proportion Most Fit Class "+str(currentmaxfpop/populationsize))
+                    reversions[u][k]=reversions[u][k]/populationsize #Unused here
                     avgf[u][k]=avgf[u][k]/populationsize
                     maxes[u].append(currentmax)
                     maxesf[u].append(currentmaxfpop)
                     mutations[u][k]=mutations[u][k]/populationsize
-                    print(mutations[u][k])
+                    print("Average Mutations in the Population "+str(mutations[u][k]))
 
                     #There are not bottlenecks in the standard purifying selection so the following is never run in
                     # this simulation but may be useful if you want to modify the code for your ends
@@ -242,20 +257,24 @@ if __name__ == '__main__':
                         currentclasses = newcurrentclasses
                         populationsize=transmission_surv
                         transmissionbottleneck=False
+
                     #Checking for random bottlenecks
                     if numpy.random.uniform(0,1)<bottleneckprob:
                         availablebens=0
                         transmissionbottleneck = True
                     currentpopsize=populationsize
+
             #Saving off averages for the simulation
             reversionsz.append(numpy.mean(reversions,axis=0))
             maxesz.append(numpy.mean(maxes,axis=0))
             avgfz.append(numpy.mean(avgf,axis=0))
             maxesfz.append(numpy.mean(maxesf,axis=0))
             mutationsz.append(numpy.mean(mutations,axis=0))
+
         save=[]
         #This is added to save off things correctly.
         mutationsz = numpy.mean(mutationsz, axis=0)
+
         #Saving of the simulations and only keeping every 100th generation to save on space
         for i in range(len(mutationsz)):
             if i%100==0:
