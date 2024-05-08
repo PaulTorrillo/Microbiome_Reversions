@@ -1,6 +1,6 @@
 # Microbiome_Reversions
 
-Code and data repository for the manuscript "Reversions mask the contribution of adaptive evolution in microbiomes" by Paul Torrillo and Tami Lieberman. Simulation code is meant to be run on a Mac operating system. On a system like Windows, it appears numpy.random.poisson and numpy.random.binomial only take up to 32 bit integers rather than 64 bits. I do not have an easy workaround but if on Windows you have errors with those functions this is likely the cause. 
+Code and data repository for the manuscript "Reversions mask the contribution of adaptive evolution in microbiomes" by Paul Torrillo and Tami Lieberman. Simulation code is meant to be run on a Mac operating system. On a system like Windows, it appears numpy.random.poisson and numpy.random.binomial only take up to 32 bit integers rather than 64 bits. I do not have an easy workaround but if you are on Windows you have errors with those functions this is likely the cause. 
 
 The current repository should contain all code and data used in the manuscript. Code repository may still be updated to improve readability.
 
