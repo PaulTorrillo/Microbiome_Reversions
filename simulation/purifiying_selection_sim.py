@@ -30,6 +30,7 @@ mut_probs=[[weak_del_mut_prob,del_mut_prob,strong_del_mut_prob,neutral_mut_prob]
             [weak_del_mut_prob,del_mut_prob,strong_del_mut_prob,neutral_mut_prob]]
 f_coefs=[ben_mut_f, weak_del_f, del_f, strong_del_f] #Fitness advantages in list form
 transmission_surv=1000 #Number of survivors given a bottleneck occured
+
 #The class containing the varying "allele"
 class allele:
     def __init__(self, size, genotype): #Initialize genetic class
@@ -140,7 +141,6 @@ if __name__ == '__main__':
         mutationsz = []
 
         for zed in range(1): #Another loop in case you want to further manipulations (unusued here)
-
             #Setting aside some lists to fill up for each run
             reversions = [None]*numberofruns
             maxes=[None]*numberofruns
@@ -150,7 +150,6 @@ if __name__ == '__main__':
             mutations=[None]*numberofruns
 
             for u in range(numberofruns): #If you want to take the average of multiple runs (unneeded in this scenario)
-
                 numbergens=5000000
                 capacity = 10**(6+3*jm)
                 bottleneckprob =0 #Probability of bottleneck though unused here
