@@ -19,6 +19,7 @@ del_f=1-0.003
 f_coefs=[ben_f, ben_f, del_f]
 bottleneck_f_coefs=[1.25, 1, 1, 1]
 transmission_surv=1000
+
 #The class containing the varying "allele"
 class allele:
     def __init__(self, size, genotype): #Initialize species class
@@ -42,6 +43,7 @@ class allele:
         mutantclasses=numpy.random.multinomial(numberofmutants, numpy.divide(self.genotype, possiblemutations)) #Specific types
         #of those mutants are then determined by the multinomial distribution
         totalnewmuts=[]
+
         for i in range(len(mutantclasses)):
             mutantnum=mutantclasses[i]
             newbens=0
@@ -95,29 +97,37 @@ class allele:
                         else:
                             mutantstoadd[mkey]=totalnewmuts[i][j]
         return mutantstoadd
+
     def get_nf(self): #Returns population multiplied by selective advantage
         toproduct=1
         for i in range(3):
             toproduct=toproduct*(f_coefs[i]**self.genotype[i]) #Calulate selective advantage
         return toproduct*self.size
+
     def get_f(self):
         toproduct=1
         for i in range(3):
             toproduct=toproduct*(f_coefs[i]**self.genotype[i]) #Calulate selective advantage
         return toproduct
+
     def increase_size(self,value): #Increasing size (for adding mutants)
         self.size=self.size+value
+
     def get_size(self): #Return size
         return self.size
+
     def get_reversions(self): #Return number of reversions multiplied by population (reversion mass?)
         tosum=self.genotype[0]+self.genotype[1]+self.genotype[2]+self.genotype[4]*2
         return self.size*tosum
+
     def get_mutations(self):
         tosum=self.genotype[0]-self.genotype[1]+self.genotype[2]
         return tosum*self.size
+
     def get_hitchikers(self):  #Check number of hitchhikers
         tosum = self.genotype[2]
         return tosum * self.size
+
     def bottlenecked(self, value):
         #Make sure to rebuild classes after bottlenecks
         self.size=value
@@ -134,6 +144,7 @@ if __name__ == '__main__':
     maxfz = []
     maxesfz = []
     mutationsz = []
+
     for zed in range(10): #Do an average of 10 runs
         reversions = [None]*numberofruns
         hitch = [None] * numberofruns
@@ -142,6 +153,7 @@ if __name__ == '__main__':
         maxf = [None] * numberofruns
         maxesf=[None]*numberofruns
         mutations=[None]*numberofruns
+
         for u in range(numberofruns): #This code just takes the average on the outside loop rather than the inside
             print(numberofruns*zed+u)
             numbergens=2000000
@@ -159,6 +171,7 @@ if __name__ == '__main__':
             maxesf[u] = []
             avgf[u]=numpy.zeros(numbergens)
             cumulativebeneficialmuts=0
+
             for k in range(numbergens):
                 currentpopsize=min(math.ceil(currentpopsize+(currentpopsize*(1-(currentpopsize/capacity)))),capacity) #Use logistic growth
                 #model with sharp cut off at capacity
@@ -183,6 +196,7 @@ if __name__ == '__main__':
                 populationsize=0
                 spec_size_list=[]
                 spec_name_list=[]
+
                 for x in currentclasses:
                     spec_size=currentclasses[x].get_size()
                     spec_f=currentclasses[x].get_f()
@@ -205,19 +219,24 @@ if __name__ == '__main__':
                     mutations[u][k]=mutations[u][k]+currentclasses[x].get_mutations()
                 for x in marked:
                     del currentclasses[x]
-                print(k)
-                print(len(currentclasses))
-                #print(populationsize)
-                print(maxspec)
-                print(currentmaxf)
-                reversions[u][k]=reversions[u][k]/populationsize
+
+                # Printing out some summary statistics and adding to lists keeping data
+                print("Current Generation " + str(k))
+                print("Number of Unique Classes " + str(len(currentclasses)))
+                print("Population Size " + str(populationsize))
+                print("Current Max Species " + str(maxspec))
+                print("Current Max Fitness " + str(currentmaxf))
+                print("Proportion Most Fit Class " + str(currentmaxfpop / populationsize))
+                reversions[u][k] = reversions[u][k] / populationsize
+                avgf[u][k] = avgf[u][k] / populationsize
                 hitch[u][k] = hitch[u][k] / populationsize
-                print(reversions[u][k])
-                avgf[u][k]=avgf[u][k]/populationsize
                 maxes[u].append(currentmax)
                 maxesf[u].append(currentmaxfpop)
-                mutations[u][k]=mutations[u][k]/populationsize#+cumulativebeneficialmuts
-                print(mutations[u][k])
+                mutations[u][k] = mutations[u][k] / populationsize
+                print("Average Mutations in the Population " + str(mutations[u][k]))
+                print("Average Reversions in the Population " + str(reversions[u][k]))
+
+
                 if transmissionbottleneck:
                     survivors=numpy.random.multinomial(transmission_surv,numpy.divide(spec_size_list,populationsize))
                     recreate=[]
@@ -249,12 +268,13 @@ if __name__ == '__main__':
                     addingbens = numbertoadd[0] - addingrevs
                     availablebens=availablebens+addingbens
                     availablerevs=availablerevs+addingrevs
-                print(availablebens-availablerevs)
+                print("Current Goal Transient Mutations: "+str(availablebens-availablerevs))
                 currentpopsize=populationsize
         #Loading off data
         reversionsz.append(numpy.mean(reversions,axis=0))
         hitchz.append(numpy.mean(hitch, axis=0))
         mutationsz.append(numpy.mean(mutations,axis=0))
+
     matplotlib.pyplot.plot(mutationsz[0])
     matplotlib.pyplot.xlabel('Generations')
     matplotlib.pyplot.ylabel('Average Mutational Load')
@@ -267,6 +287,7 @@ if __name__ == '__main__':
     save1 = []
     save2 = []
     save3=[]
+
     #Saving off simulations
     for i in range(len(mutationsz)):
         if i % 100 == 0:

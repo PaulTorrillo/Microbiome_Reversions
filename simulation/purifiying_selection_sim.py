@@ -219,7 +219,7 @@ if __name__ == '__main__':
                         del currentclasses[x]
 
                     #Printing out some summary statistics and adding to lists keeping data
-                    print("Current Iteration "+str(k))
+                    print("Current Generation "+str(k))
                     print("Number of Unique Classes "+str(len(currentclasses)))
                     print("Population Size "+str(populationsize))
                     print("Current Max Species "+str(maxspec))
