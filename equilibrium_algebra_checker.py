@@ -48,7 +48,7 @@ part2=simplify(n*(p/(p+p)))*(A[0,0]*A[1,0]+A[1,0]*A[0,0]+2*A[0,0]*A[2,0]+2*A[2,0
 
 initial_equilibrium=part1+part2
 initial_WT=simplify(n*(A[1,1]*A[2,1]+A[2,1]*A[1,1]+2*A[2,1]*A[2,1]))
-print('dN assuming equilibrum')
+print('dN assuming equilibrum (continuous)')
 print(simplify(initial_equilibrium))
-print('dN assuming no initial transient')
+print('dN assuming no initial transient (continuous)')
 print(simplify(initial_WT))
